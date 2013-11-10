@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html> 
+ 
+	<head> 
+		<meta name="description" content="View your Flickr photos in full screen and share with your contacts" />
+		<meta name="keywords" content="flickr,full, screen, image, width, wide, expanded" />
+
+		<title>Flickr Full Screen Viewer</title>
+	
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}flickbg.css" />
+
+		<script type="text/javascript">
+			var domain = '{{ domain }}';
+		</script>
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}flickbg.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}jscolor.js"></script>
+
+
+	</head> 
+	 
+	<body> 
+
+		<div id="wrap"> 
+		 
+			 <div> 
+		   		<h1><span style="color: #0063DC;">Flick</span><span style="color: #FF0084">r</span> Full Screen Viewer</h1>
+				<p class="userinput">Paste a link to your photo on Flickr. The generated link below will show your photos in glorious full screen.</p>
+
+				<p class="userinput">My photo page is
+					<input type="text" id="photopage" value="http://www.flickr.com/photos/mendhak/5113172451/" />
+				</p>
+
+
+				 <div class="generatedurl">
+					 <br />
+					 <label for="finalurl" class="tiny" >Share this with your friends:</label>
+					 <input type="text" readonly="readonly" id="finalurl" value="http://{{ domain }}/full/5113172451" class="widebig" />
+					 <span id="generateDiv">
+						<a class="generate" id="preview">Preview</a>
+						<img id="loading" src="{{ STATIC_URL }}progress.gif" />
+					</span>
+
+				 </div>
+				<br />
+
+			 </div> 
+		 
+		</div> 
+		
+
+
+<a class="sourcelink" href="https://github.com/mendhak/flickrbackground">Source code</a>
+
+	</body> 
+</html> 
+
