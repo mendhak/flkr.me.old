@@ -1,21 +1,36 @@
-<!-- This is a sample apache2 site configuration file.  -->
-<VirtualHost *:81>
-	DocumentRoot /home/mendhak/Code/flickrsignature/public
-	<Directory /home/mendhak/Code/flickrsignature/public>
-		Options Indexes FollowSymLinks MultiViews +ExecCGI
-		AllowOverride all
-		Order allow,deny
-		Allow from all
-		AddDefaultCharset utf-8
-		DirectoryIndex index.html
+<VirtualHost *:80>
+    ServerName www.flkr.me
+    ServerAlias *.flkr.me
+    Redirect permanent / http://flkr.me/
+</VirtualHost>
 
-	</Directory>
+<VirtualHost *:80>
+    ServerName flkr.me
+    DirectoryIndex index.html
+    DocumentRoot /home/mendhak/flkr.me/public
 
-	<Files django.fcgi>
-	    SetHandler fastcgi-script
-	    PythonDebug On
-	</Files>
+   WSGIScriptAlias / /home/mendhak/flkr.me/flkrme/wsgi.py
+   WSGIDaemonProcess fs_com user=mendhak group=mendhak processes=1 threads=10
+   WSGIProcessGroup fs_com
 
-	Header set Access-Control-Allow-Origin *
+   Alias /static /home/mendhak/flkr.me/static/
+   <Location "/static">
+      SetHandler None
+   </Location>
+
+   Alias /google138cc6dd6d32571c.html /home/mendhak/flkr.me/public/google138cc6dd6d32571c.html
+   Alias /robots.txt /home/mendhak/flkr.me/public/robots.txt
+   Alias /favicon.ico /home/mendhak/flkr.me/public/favicon.ico
+   Header set Access-Control-Allow-Origin *
+
+   Header set Cache-Control "max-age=7200, public"
+   Header set Pragma cache
+
+   LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" nclf
+
+   CustomLog     /var/log/apache2/flkr.me.access.log nclf
+   #CustomLog "|/usr/sbin/rotatelogs /var/log/apache2/flkr.me.access.log 5M" nclf
+   ErrorLog /var/log/apache2/flkr.me.error.log
+   #ErrorLog "|/usr/sbin/rotatelogs /var/log/apache2/flkr.error.log 5M"
 
 </VirtualHost>
