@@ -1,7 +1,9 @@
 import httplib
+from django.core.cache import cache
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
+from django.views.decorators.cache import cache_page
 from flickrtools import flickrapi
 import datetime
 import re
@@ -14,7 +16,6 @@ import re
 
 apiKey = "a39dfdf51784c76fa3234f88bec38b0e"
 
-
 def image(request, nsid, num=1, size='', popular=''):
     if not num or not num.isdigit() or int(num) <= 0:
         num = 1
@@ -23,12 +24,19 @@ def image(request, nsid, num=1, size='', popular=''):
     if not popular:
         popular = ''
 
+    cacheKey = "image"+nsid+num+size+popular
     resp = HttpResponse(status=302)
-    nsid = getUserNSID(request, resp, apiKey, nsid)
-    photo = flickrapi.getPhoto(apiKey, nsid, num, popular)
-    destinationUrl = flickrapi.getImageUrl(photo, size)
-    resp['Title'] = photo.title.encode("utf-8")
-    resp['Location'] = destinationUrl
+    cachedResponse = cache.get(cacheKey)
+
+    if cachedResponse:
+        resp = cachedResponse
+    else:
+        nsid = getUserNSID(request, resp, apiKey, nsid)
+        photo = flickrapi.getPhoto(apiKey, nsid, num, popular)
+        destinationUrl = flickrapi.getImageUrl(photo, size)
+        resp['Title'] = photo.title.encode("utf-8")
+        resp['Location'] = destinationUrl
+        cache.add(cacheKey, resp, 60*15)
     return resp
 
 
@@ -58,22 +66,29 @@ def searchRedirect(request, tags='', num=1, nsid=''):
     resp['Location'] = destinationUrl
     return resp
 
-
 def redirect(request, nsid, num, popular):
     if not num or not num.isdigit() or int(num) <= 0:
         num = 1
     if not popular:
         popular = ''
 
+    cacheKey = "redirect"+nsid+num+popular
     resp = HttpResponse(status=302)
-    nsid = getUserNSID(request, resp, apiKey, nsid)
-    photo = flickrapi.getPhoto(apiKey, nsid, num, popular)
-    destinationUrl = flickrapi.getPhotoPageUrl(photo, nsid)
-    resp['Title'] = photo.title.encode("utf-8")
-    resp['Location'] = destinationUrl
+    cachedResponse = cache.get(cacheKey)
+
+    if cachedResponse:
+        resp = cachedResponse
+    else:
+        resp = HttpResponse(status=302)
+        nsid = getUserNSID(request, resp, apiKey, nsid)
+        photo = flickrapi.getPhoto(apiKey, nsid, num, popular)
+        destinationUrl = flickrapi.getPhotoPageUrl(photo, nsid)
+        resp['Title'] = photo.title.encode("utf-8")
+        resp['Location'] = destinationUrl
+        cache.add(cacheKey, resp, 60*15)
     return resp
 
-
+@cache_page(60 * 15)
 def nsid(request, username):
     resp = HttpResponse()
     nsid = getUserNSID(request, resp, apiKey, username)
@@ -97,7 +112,7 @@ def readTitleFromHeader(url):
 
     return title
 
-
+@cache_page(60 * 15)
 def getTitleFromUrl(request, url):
     resp = HttpResponse()
     title = readTitleFromHeader(url)
