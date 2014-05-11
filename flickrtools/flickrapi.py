@@ -12,7 +12,7 @@ def getPhoto(apiKey, nsid, photoNumber, popular):
     else:
         popular = 'date-posted-desc'
 
-    photoSearchUrl = "http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key={0}&user_id={1}&per_page=1&page={2}&sort={3}".format(apiKey, nsid, photoNumber, popular)
+    photoSearchUrl = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key={0}&user_id={1}&per_page=1&page={2}&sort={3}".format(apiKey, nsid, photoNumber, popular)
     dom = minidom.parse(urllib.urlopen(photoSearchUrl))
 
     photoNode = dom.getElementsByTagName("photo")[0]
@@ -26,7 +26,7 @@ def getPhoto(apiKey, nsid, photoNumber, popular):
 
 
 def getPhotoBySearch(apiKey, nsid, searchTag, photoNumber):
-    photoSearchUrl = "http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key={0}&user_id={1}&per_page=1&page={2}&tags={3}".format(apiKey, nsid, photoNumber, searchTag)
+    photoSearchUrl = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key={0}&user_id={1}&per_page=1&page={2}&tags={3}".format(apiKey, nsid, photoNumber, searchTag)
 
     dom = minidom.parse(urllib.urlopen(photoSearchUrl))
 
@@ -46,7 +46,7 @@ def getNSID(apiKey, username):
         username = 'http://www.flickr.com/photos/' + username
 
     if not re.match("([0-9]+@N[0-9]+)", username):
-        lookupUrl = "http://api.flickr.com/services/rest/?method=flickr.urls.lookupUser&api_key={0}&url={1}".format(apiKey, username)
+        lookupUrl = "https://api.flickr.com/services/rest/?method=flickr.urls.lookupUser&api_key={0}&url={1}".format(apiKey, username)
         dom = minidom.parse(urllib.urlopen(lookupUrl))
         userNode = dom.getElementsByTagName("user")[0]
         nsid = userNode.getAttribute("id")
@@ -124,7 +124,7 @@ def getPhotoIdFromUrl(flickrUrl):
 def getPhotoInfo(apiKey, photoId):
 
 
-    photoInfoUrl = "http://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key={0}&photo_id={1}"\
+    photoInfoUrl = "https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key={0}&photo_id={1}"\
                         .format(apiKey, photoId)
     dom = minidom.parse(urllib.urlopen(photoInfoUrl))
 
@@ -142,7 +142,7 @@ def getLargestSizeUrl(apiKey, photoId):
     Gets the largest available photo size for a photo, but not the original
     """
     largestUrl = None
-    photoSizesUrl = "http://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key={0}&photo_id={1}"\
+    photoSizesUrl = "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key={0}&photo_id={1}"\
                     .format(apiKey, photoId)
 
     dom = minidom.parse(urllib.urlopen(photoSizesUrl))
